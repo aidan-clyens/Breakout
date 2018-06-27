@@ -1,5 +1,4 @@
-'''
-Breakout
+"""Breakout
 
 Instructions:
 - Use the left and right arrow keys to control the player and bounce the ball
@@ -9,7 +8,7 @@ off the paddle
 
 Aidan Clyens
 June 21, 2018
-'''
+"""
 # Imports
 import pygame
 import random
@@ -20,13 +19,13 @@ WIDTH = 500
 HEIGHT = 400
 # Set number of rows and columns for blocks
 ROWS = 4
-COLUMNS = 30
+COLUMNS = 15
 # Object dimensions
 BLOCK_WIDTH = WIDTH / COLUMNS
-BLOCK_HEIGHT = BLOCK_WIDTH
-BALL_HEIGHT = BLOCK_WIDTH
+BLOCK_HEIGHT = BLOCK_WIDTH / 2
+BALL_HEIGHT = BLOCK_HEIGHT
 BALL_WIDTH = BALL_HEIGHT
-PLAYER_WIDTH = BLOCK_WIDTH * 4
+PLAYER_WIDTH = BLOCK_HEIGHT * 4
 PLAYER_HEIGHT = BLOCK_HEIGHT
 # Object speeds
 PLAYER_SPEED = 6
@@ -40,17 +39,20 @@ BLUE = (0,0,255)
 # Set the screen dimensions
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 
-'''
-Block
+""" Block
 Generated at the top of the screen
-'''
+"""
 class Block(object):
 	# Block constructor
 	def __init__(self, x, y):
 		self.x = x
 		self.y = y
-		self.rect = pygame.Rect(self.x, self.y, BLOCK_WIDTH, BLOCK_HEIGHT)
 		self.colour = self.choose_colour()
+		self.image = pygame.Surface([BLOCK_WIDTH, BLOCK_HEIGHT])
+		self.image.fill(self.colour)
+		self.rect = self.image.get_rect()
+		self.rect.x = x
+		self.rect.y = y
 	# Randomize the Block colour
 	def choose_colour(self):
 		num = random.randint(1,5)
@@ -65,21 +67,26 @@ class Block(object):
 		elif num == 5:
 			return (0,128,255)
 
-'''
-Player
+""" Player
 Controlled by the human player with the left and right arrow keys
-'''
+"""
 class Player(object):
+	x = (WIDTH / 2) - (BLOCK_WIDTH / 2)
+	y = HEIGHT - BLOCK_HEIGHT
+	colour = WHITE
+
 	# Player constructor
 	def __init__(self):
-		self.x = (WIDTH / 2) - (BLOCK_WIDTH / 2)
-		self.y = HEIGHT - BLOCK_HEIGHT
-		self.rect = pygame.Rect(self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
-		self.colour = WHITE
+		self.image = pygame.Surface([PLAYER_WIDTH, PLAYER_HEIGHT])
+		self.image.fill(self.colour)
+		self.rect = self.image.get_rect()
 		self.lives = 3
+		self.rect.x = self.x
+		self.rect.y = self.y
 	# Draw Player on screen
 	def draw(self):
-		self.rect = pygame.Rect(self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
+		self.rect.x = self.x
+		self.rect.y = self.y
 		pygame.draw.rect(SCREEN, self.colour, self.rect)
 	# Update Player's movement
 	def move(self):
@@ -89,18 +96,25 @@ class Player(object):
 		if pressed[pygame.K_RIGHT]:
 			if not self.x > WIDTH - PLAYER_WIDTH: self.x += PLAYER_SPEED
 
-'''
-Ball
-'''
+""" Ball
+"""
 class Ball(object):
+	colour = WHITE
+	x = WIDTH / 2
+	y = HEIGHT / 3
+
 	# Ball constructor
 	def __init__(self):
 		self.reset()
-		self.rect = pygame.Rect(self.x, self.y, BALL_WIDTH, BLOCK_HEIGHT)
-		self.colour = WHITE
+		self.image = pygame.Surface([BALL_WIDTH, BALL_HEIGHT])
+		self.image.fill(self.colour)
+		self.rect = self.image.get_rect()
+		self.rect.x = self.x
+		self.rect.y = self.y
 	# Draw Ball on screen
 	def draw(self):
-		self.rect = pygame.Rect(self.x, self.y, BALL_WIDTH, BALL_HEIGHT)
+		self.rect.x = self.x
+		self.rect.y = self.y
 		pygame.draw.rect(SCREEN, self.colour, self.rect)
 	# Update Ball's movement
 	def move(self, player, blocks):
@@ -143,9 +157,8 @@ class Ball(object):
 		self.speed_y = BALL_SPEED
 		time.sleep(1)
 
-'''
-Local Functions
-'''
+"""Local Functions
+"""
 # Add blocks to list
 def add_blocks():
 	blocks = []
@@ -160,9 +173,8 @@ def draw_blocks(blocks):
 	for i in range(0, len(blocks)):
 		pygame.draw.rect(SCREEN, blocks[i].colour, blocks[i].rect)
 
-'''
-Main Function
-'''
+"""Main Function
+"""
 def main():
 	# Start game
 	pygame.init()
@@ -185,7 +197,7 @@ def main():
 		ball.move(player, blocks)
 
 		# Draw screen and objects
-		SCREEN.fill((0,0,0))
+		SCREEN.fill(BLACK)
 		draw_blocks(blocks)
 		player.draw()
 		ball.draw()

@@ -7,7 +7,7 @@ off the paddle
 - Don't miss the ball more than 3 times or you lose
 
 Aidan Clyens
-June 21, 2018
+July 23, 2018
 """
 # Imports
 import pygame
@@ -35,6 +35,8 @@ WHITE = (255,255,255)
 RED = (255,0,0)
 GREEN = (0,255,0)
 BLUE = (0,0,255)
+ORANGE = (255,165,0)
+MAGENTA = (255,0,255)
 
 # Set the screen dimensions
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -55,6 +57,7 @@ class Block(object):
 		self.rect.y = y
 	# Randomize the Block colour
 	def choose_colour(self):
+		# Choose between 1 of 5 different colours by generating a pseudorandom integer between 1 and 5
 		num = random.randint(1,5)
 		if num == 1:
 			return RED
@@ -63,14 +66,15 @@ class Block(object):
 		elif num == 3:
 			return BLUE
 		elif num == 4:
-			return (255,128,0)
+			return ORANGE
 		elif num == 5:
-			return (0,128,255)
+			return MAGENTA
 
 """ Player
 Controlled by the human player with the left and right arrow keys
 """
 class Player(object):
+	# Initialize the Player position to the bottom of the screen and centered horizontally
 	x = (WIDTH / 2) - (BLOCK_WIDTH / 2)
 	y = HEIGHT - BLOCK_HEIGHT
 	colour = WHITE
@@ -99,6 +103,7 @@ class Player(object):
 """ Ball
 """
 class Ball(object):
+	# Initialized the Ball position to the center of the screen horizontally and 2/3 down the screen vertically
 	colour = WHITE
 	x = WIDTH / 2
 	y = HEIGHT / 3
@@ -179,7 +184,7 @@ def main():
 	# Start game
 	pygame.init()
 	running = True
-
+	# Create a new clock and add all objects to the game
 	clock = pygame.time.Clock()
 	blocks = add_blocks()
 	player = Player()
@@ -209,7 +214,7 @@ def main():
 		if len(blocks) == 0:
 			running = False
 
-		# Update screen
+		# Update screen at 60 FPS
 		pygame.display.flip()
 		clock.tick(60)
 

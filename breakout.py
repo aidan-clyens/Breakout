@@ -31,6 +31,7 @@ PLAYER_HEIGHT = BLOCK_HEIGHT
 PLAYER_SPEED = 6
 BALL_SPEED = 4
 # Colours
+BLACK = (0,0,0)
 WHITE = (255,255,255)
 RED = (255,0,0)
 GREEN = (0,255,0)
@@ -184,6 +185,9 @@ def main():
 	# Start game
 	pygame.init()
 	running = True
+
+	background = pygame.image.load('arcade-background.jpg')
+
 	# Create a new clock and add all objects to the game
 	clock = pygame.time.Clock()
 	blocks = add_blocks()
@@ -202,7 +206,7 @@ def main():
 		ball.move(player, blocks)
 
 		# Draw screen and objects
-		SCREEN.fill(BLACK)
+		SCREEN.blit(background, (0,0))
 		draw_blocks(blocks)
 		player.draw()
 		ball.draw()

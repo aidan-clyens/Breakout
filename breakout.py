@@ -163,17 +163,15 @@ class Ball():
 			if self.rect.colliderect(block.rect):
 				# Ball hits side of Block
 				if block.rect.bottom - self.rect.top > 3:
-					print "side"
 					self.dx *= -1
 				else:
-					print "bottom"
 					self.dy *= -1
 					self.rect.y += 2
 
 				blocks.remove(block)
 
 
-
+	# Reset the Ball's position
 	def reset(self):
 		num = random.randint(0,1)
 		if num == 0:

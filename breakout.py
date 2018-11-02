@@ -29,7 +29,7 @@ PLAYER_WIDTH = BLOCK_HEIGHT * 4
 PLAYER_HEIGHT = BLOCK_HEIGHT
 # Object speeds
 PLAYER_SPEED = 6
-BALL_SPEED = 4
+BALL_SPEED = 2
 # Colours
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -47,24 +47,41 @@ Generated at the top of the screen
 """
 class Block():
 	# Block constructor
-	def __init__(self, x, y):
-		self.x = x
-		self.y = y
-		self.colour = self.choose_colour()
-		self.image = pygame.Surface([BLOCK_WIDTH, BLOCK_HEIGHT])
-		self.image.fill(self.colour)
+	def __init__(self, x, y, w, h, colour):
+		self.image = pygame.Surface([w, h])
+		self.image.fill(colour)
 		self.rect = self.image.get_rect()
 		self.rect.x = x
 		self.rect.y = y
+		self.w = w
+		self.h = h
 
 	# Draw the Block
 	def draw(self):
-		pygame.draw.rect(screen, self.colour, self.rect)
+		screen.blit(self.image, [self.rect.x, self.rect.y])
+
+	def update(self):
+		self.draw()
+
+	def test_collision(self, blocks):
+		collisions = []
+		for block in blocks:
+			if self.rect.colliderect(block.rect):
+				collisions.append(block)
+
+		return collisions
+
+class LevelBlock(Block):
+	def __init__(self, x, y):
+		Block.__init__(self, x, y, BLOCK_WIDTH, BLOCK_HEIGHT, self.choose_colour())
+
+	def update(self):
+		Block.update(self)
 
 	# Randomize the Block colour
 	def choose_colour(self):
 		# Choose between 1 of 5 different colours by generating a pseudorandom integer between 1 and 5
-		num = random.randint(1,5)
+		num = random.randint(1, 5)
 		if num == 1:
 			return RED
 		elif num == 2:
@@ -79,56 +96,45 @@ class Block():
 """ Player
 Controlled by the human player with the left and right arrow keys
 """
-class Player():
-	# Initialize the Player position to the bottom of the screen and centered horizontally
-	x = (WIDTH / 2) - (BLOCK_WIDTH / 2)
-	y = HEIGHT - BLOCK_HEIGHT
-	colour = WHITE
-
+class Player(Block):
 	# Player constructor
 	def __init__(self):
-		self.image = pygame.Surface([PLAYER_WIDTH, PLAYER_HEIGHT])
-		self.image.fill(self.colour)
-		self.rect = self.image.get_rect()
+		x = WIDTH / 2
+		y = HEIGHT - PLAYER_HEIGHT
+		Block.__init__(self, x, y, PLAYER_WIDTH, PLAYER_HEIGHT, WHITE)
 		self.lives = 3
-		self.rect.x = self.x
-		self.rect.y = self.y
+
 	# Draw Player on screen
-	def draw(self):
-		self.rect.x = self.x
-		self.rect.y = self.y
-		pygame.draw.rect(screen, self.colour, self.rect)
+	def update(self):
+		self.move()
+		Block.update(self)
+
 	# Update Player's movement
 	def move(self):
 		pressed = pygame.key.get_pressed()
 		if pressed[pygame.K_LEFT]:
-			if not self.x < 0: self.x -= PLAYER_SPEED
+			if not self.rect.x < 0: self.rect.x -= PLAYER_SPEED
 		if pressed[pygame.K_RIGHT]:
-			if not self.x > WIDTH - PLAYER_WIDTH: self.x += PLAYER_SPEED
+			if not self.rect.x > WIDTH - PLAYER_WIDTH: self.rect.x += PLAYER_SPEED
 
 """ Ball
 """
-class Ball():
-	# Initialized the Ball position to the center of the screen horizontally and 2/3 down the screen vertically
-	colour = WHITE
-	x = WIDTH / 2
-	y = HEIGHT / 3
-
+class Ball(Block):
 	# Ball constructor
 	def __init__(self):
-		self.image = pygame.Surface([BALL_WIDTH, BALL_HEIGHT])
-		self.image.fill(self.colour)
-		self.rect = self.image.get_rect()
+		x = WIDTH / 2
+		y = HEIGHT / 3
+		Block.__init__(self, x, y, BALL_WIDTH, BALL_HEIGHT, WHITE)
 		self.reset()
 
 	# Draw Ball on screen
-	def draw(self):
-		pygame.draw.rect(screen, self.colour, self.rect)
+	def update(self, player, blocks):
+		self.move(player, blocks)
+		Block.update(self)
 
-	# Update Ball's movement
-	def move(self, player, blocks):
+	def moveX(self, player, blocks):
+		# x-Axis Movement
 		self.rect.x += self.dx
-		self.rect.y += self.dy
 
 		# Collision with left wall
 		if self.rect.left < 0:
@@ -138,6 +144,30 @@ class Ball():
 		if self.rect.right > WIDTH:
 			self.dx *= -1
 			self.rect.x -= 2
+
+		collisions = self.test_collision(blocks)
+		for block in collisions:
+			# Moving right
+			if self.dx > 0:
+				self.rect.right = block.rect.left
+			# Moving left
+			if self.dx < 0:
+				self.rect.left = block.rect.right
+			self.dx *= -1
+			break
+
+		if self.rect.colliderect(player.rect):
+			# Moving up
+			if self.dx > 0:
+				self.rect.right = player.rect.left
+			# Moving down
+			if self.dx < 0:
+				self.rect.left = player.rect.right
+			self.dx *= -1
+
+	def moveY(self, player, blocks):
+		self.rect.y += self.dy
+
 		# Collision with top wall
 		if self.rect.top < 0:
 			self.dy *= -1
@@ -146,30 +176,31 @@ class Ball():
 			player.lives -= 1
 			self.reset()
 
-		# Collision with Player
+		collisions = self.test_collision(blocks)
+		for block in collisions:
+			# Moving down
+			if self.dy > 0:
+				self.rect.bottom = block.rect.top
+			# Moving up
+			if self.dy < 0:
+				self.rect.top = block.rect.bottom
+			self.dy *= -1
+			break
+
 		if self.rect.colliderect(player.rect):
-			# Ball hits side of Player
-			if self.rect.bottom - player.rect.top > 1:
-				self.dx *= -1
-			else:
-				self.dy *= -1
-				self.rect.y += 2
-				if self.rect.right > player.rect.right: self.dx *= -1
-				if self.rect.left < player.rect.left: self.dx *= -1
+			# Moving down
+			if self.dy > 0:
+				self.rect.bottom = player.rect.top
+			# Moving up
+			if self.dy < 0:
+				self.rect.top = player.rect.bottom
+			self.dy *= -1
 
 
-		# Collision with Blocks
-		for block in blocks:
-			if self.rect.colliderect(block.rect):
-				# Ball hits side of Block
-				if block.rect.bottom - self.rect.top > 3:
-					self.dx *= -1
-				else:
-					self.dy *= -1
-					self.rect.y += 2
-
-				blocks.remove(block)
-
+	# Update Ball's movement
+	def move(self, player, blocks):
+		self.moveX(player, blocks)
+		self.moveY(player, blocks)
 
 	# Reset the Ball's position
 	def reset(self):
@@ -192,14 +223,9 @@ def add_blocks():
 	for row in range(0, ROWS + 1):
 		if row > 0:
 			for col in range(0, COLUMNS + 1):
-				block = Block(col*BLOCK_WIDTH, row*BLOCK_HEIGHT)
+				block = LevelBlock(col*BLOCK_WIDTH, row*BLOCK_HEIGHT)
 				blocks.append(block)
 	return blocks
-
-# Draw all blocks in list on the screen
-def draw_blocks(blocks):
-	for i in range(0, len(blocks)):
-		blocks[i].draw()
 
 """Main Function
 """
@@ -229,9 +255,10 @@ def main():
 
 		# Draw screen and objects
 		screen.blit(background, (0,0))
-		draw_blocks(blocks)
-		player.draw()
-		ball.draw()
+		for block in blocks:
+			block.update()
+		player.update()
+		ball.update(player, blocks)
 
 		# End game conditions
 		if player.lives == 0:

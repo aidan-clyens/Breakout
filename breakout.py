@@ -154,6 +154,7 @@ class Ball(Block):
 			if self.dx < 0:
 				self.rect.left = block.rect.right
 			self.dx *= -1
+			blocks.remove(block)
 			break
 
 		if self.rect.colliderect(player.rect):
@@ -185,6 +186,7 @@ class Ball(Block):
 			if self.dy < 0:
 				self.rect.top = block.rect.bottom
 			self.dy *= -1
+			blocks.remove(block)
 			break
 
 		if self.rect.colliderect(player.rect):

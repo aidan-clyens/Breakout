@@ -29,18 +29,21 @@ PLAYER_WIDTH = BLOCK_HEIGHT * 4
 PLAYER_HEIGHT = BLOCK_HEIGHT
 # Object speeds
 PLAYER_SPEED = 6
-BALL_SPEED = 2
+BALL_SPEED = 4
 # Colours
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 RED = (255,0,0)
 GREEN = (0,255,0)
-BLUE = (0,0,255)
 ORANGE = (255,165,0)
-MAGENTA = (255,0,255)
+BLUE = (46, 76, 244)
+YELLOW = (247, 255, 30)
 
 # Set the screen dimensions
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+paused = False
+running = False
 
 """ Block
 Generated at the top of the screen
@@ -73,25 +76,27 @@ class Block():
 
 class LevelBlock(Block):
 	def __init__(self, x, y):
-		Block.__init__(self, x, y, BLOCK_WIDTH, BLOCK_HEIGHT, self.choose_colour())
+		row = y / BLOCK_HEIGHT
+		Block.__init__(self, x, y, BLOCK_WIDTH, BLOCK_HEIGHT, self.choose_colour(row))
 
 	def update(self):
 		Block.update(self)
 
 	# Randomize the Block colour
-	def choose_colour(self):
+	def choose_colour(self, row):
 		# Choose between 1 of 5 different colours by generating a pseudorandom integer between 1 and 5
-		num = random.randint(1, 5)
-		if num == 1:
+		if row == 1:
 			return RED
-		elif num == 2:
-			return GREEN
-		elif num == 3:
-			return BLUE
-		elif num == 4:
+		if row == 2:
 			return ORANGE
-		elif num == 5:
-			return MAGENTA
+		if row == 3:
+			return YELLOW
+		if row == 4:
+			return GREEN
+		if row >= 5:
+			return BLUE
+		
+		return WHITE
 
 """ Player
 Controlled by the human player with the left and right arrow keys
@@ -250,10 +255,6 @@ def main():
 				# Quit the game when the window is closed
 	    		if event.type == pygame.QUIT:
 	        		running = False
-
-		# Move objects
-		player.move()
-		ball.move(player, blocks)
 
 		# Draw screen and objects
 		screen.blit(background, (0,0))

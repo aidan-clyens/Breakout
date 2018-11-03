@@ -117,9 +117,9 @@ class Player(Block):
 	# Update Player's movement
 	def move(self):
 		pressed = pygame.key.get_pressed()
-		if pressed[pygame.K_LEFT]:
+		if pressed[pygame.K_a]:
 			if not self.rect.x < 0: self.rect.x -= PLAYER_SPEED
-		if pressed[pygame.K_RIGHT]:
+		if pressed[pygame.K_d]:
 			if not self.rect.x > WIDTH - PLAYER_WIDTH: self.rect.x += PLAYER_SPEED
 
 """ Ball

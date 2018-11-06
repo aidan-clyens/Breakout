@@ -1,0 +1,24 @@
+# Constants
+WIDTH = 800
+HEIGHT = 500
+# Set number of rows and columns for blocks
+ROWS = 5
+COLUMNS = 15
+# Object dimensions
+BLOCK_WIDTH = WIDTH / COLUMNS
+BLOCK_HEIGHT = BLOCK_WIDTH / 3
+BALL_WIDTH = BLOCK_HEIGHT / 1.5
+BALL_HEIGHT = BALL_WIDTH
+PLAYER_WIDTH = BLOCK_HEIGHT * 4
+PLAYER_HEIGHT = BLOCK_HEIGHT
+# Object speeds
+PLAYER_SPEED = 9
+BALL_SPEED = 5
+# Colours
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+ORANGE = (255, 165, 0)
+BLUE = (46, 76, 244)
+YELLOW = (247, 255, 30)

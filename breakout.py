@@ -13,31 +13,7 @@ July 23, 2018
 import pygame
 import random
 import time
-
-# Constants
-WIDTH = 500
-HEIGHT = 400
-# Set number of rows and columns for blocks
-ROWS = 4
-COLUMNS = 15
-# Object dimensions
-BLOCK_WIDTH = WIDTH / COLUMNS
-BLOCK_HEIGHT = BLOCK_WIDTH / 2
-BALL_HEIGHT = BLOCK_HEIGHT
-BALL_WIDTH = BALL_HEIGHT
-PLAYER_WIDTH = BLOCK_HEIGHT * 4
-PLAYER_HEIGHT = BLOCK_HEIGHT
-# Object speeds
-PLAYER_SPEED = 6
-BALL_SPEED = 4
-# Colours
-BLACK = (0,0,0)
-WHITE = (255,255,255)
-RED = (255,0,0)
-GREEN = (0,255,0)
-ORANGE = (255,165,0)
-BLUE = (46, 76, 244)
-YELLOW = (247, 255, 30)
+from constants import *
 
 background_image = 'arcade-background.jpg'
 
@@ -108,7 +84,7 @@ class Player(Block):
 	def __init__(self):
 		x = WIDTH / 2
 		y = HEIGHT - PLAYER_HEIGHT
-		Block.__init__(self, x, y, PLAYER_WIDTH, PLAYER_HEIGHT, WHITE)
+		Block.__init__(self, x, y, PLAYER_WIDTH, PLAYER_HEIGHT, RED)
 		self.lives = 3
 
 	# Draw Player on screen
@@ -131,7 +107,7 @@ class Ball(Block):
 	def __init__(self):
 		x = WIDTH / 2
 		y = HEIGHT / 3
-		Block.__init__(self, x, y, BALL_WIDTH, BALL_HEIGHT, WHITE)
+		Block.__init__(self, x, y, BALL_WIDTH, BALL_HEIGHT, RED)
 		self.reset()
 
 	# Draw Ball on screen
@@ -259,7 +235,9 @@ def main():
 	        		running = False
 
 		# Draw screen and objects
-		screen.blit(background, (0,0))
+		# screen.blit(background, (0,0))
+		screen.fill(BLACK)
+
 		for block in blocks:
 			block.update()
 		player.update()

@@ -128,6 +128,7 @@ class Ball(Block):
 			self.dx *= -1
 			self.rect.x -= 2
 
+		# Collision with blocks
 		collisions = self.test_collision(blocks)
 		for block in collisions:
 			# Moving right
@@ -140,6 +141,7 @@ class Ball(Block):
 			blocks.remove(block)
 			break
 
+		# Collision with player
 		if self.rect.colliderect(player.rect):
 			# Moving up
 			if self.dx > 0:
@@ -160,6 +162,7 @@ class Ball(Block):
 			player.lives -= 1
 			self.reset()
 
+		# Collision with blocks
 		collisions = self.test_collision(blocks)
 		for block in collisions:
 			# Moving down
@@ -172,14 +175,20 @@ class Ball(Block):
 			blocks.remove(block)
 			break
 
+		# Collision with player
 		if self.rect.colliderect(player.rect):
+			player_middle = player.rect.x + player.w/2
+			ball_middle = self.rect.x + self.w/2
 			# Moving down
 			if self.dy > 0:
 				self.rect.bottom = player.rect.top
-			# Moving up
-			if self.dy < 0:
-				self.rect.top = player.rect.bottom
+			
+			print player_middle - ball_middle
+			if abs(player_middle - ball_middle) > 25:
+				self.dx *= -1
+
 			self.dy *= -1
+
 
 
 	# Update Ball's movement

@@ -39,6 +39,8 @@ ORANGE = (255,165,0)
 BLUE = (46, 76, 244)
 YELLOW = (247, 255, 30)
 
+background_image = 'arcade-background.jpg'
+
 # Set the screen dimensions
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -241,7 +243,7 @@ def main():
 	pygame.init()
 	running = True
 
-	background = pygame.image.load('arcade-background.jpg')
+	background = pygame.image.load(background_image)
 
 	# Create a new clock and add all objects to the game
 	clock = pygame.time.Clock()

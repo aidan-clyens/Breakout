@@ -1,13 +1,12 @@
 """Breakout
 
 Instructions:
-- Use the left and right arrow keys to control the player and bounce the ball
-off the paddle
-- Break the all of the blocks with ball
+- Use the A and D keys to control the player and bounce the ball
+- Break the all of the blocks with the ball to win
 - Don't miss the ball more than 3 times or you lose
 
 Aidan Clyens
-July 23, 2018
+Nov. 7, 2018
 """
 # Imports
 import pygame
@@ -16,7 +15,6 @@ import time
 from constants import *
 
 # Required resource files
-background_image = 'arcade-background.jpg'
 atari_font = 'fonts/AtariClassic-Regular.ttf'
 
 # Set the screen dimensions
@@ -246,8 +244,6 @@ def main():
 	running = True
 	paused = True
 
-	background = pygame.image.load(background_image)
-
 	# Create a new clock
 	clock = pygame.time.Clock()
 	blocks = add_blocks()
@@ -276,7 +272,6 @@ def main():
 
 		else:
 			# Draw screen and objects
-			# screen.blit(background, (0,0))
 			screen.fill(BLACK)
 
 			for block in blocks:

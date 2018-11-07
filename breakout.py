@@ -15,13 +15,32 @@ import random
 import time
 from constants import *
 
+# Required resource files
 background_image = 'arcade-background.jpg'
+atari_font = 'fonts/AtariClassic-Regular.ttf'
 
 # Set the screen dimensions
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 paused = False
 running = False
+
+""" Menu
+The pause menu
+"""
+class Menu():
+	def __init__(self):
+		self.title_font = pygame.font.SysFont(atari_font, MENU_TITLE_FONT)
+		self.caption_font = pygame.font.SysFont(atari_font, MENU_CAPTION_FONT)
+
+	def draw(self):
+		title = self.title_font.render("Breakout", True, WHITE)
+		caption = self.caption_font.render("Press ESC to start", True, WHITE)
+
+		screen.blit(title, [WIDTH / 2 - title.get_rect().width / 2, HEIGHT /
+                      2 - title.get_rect().height / 2])
+		screen.blit(caption, [WIDTH / 2 - caption.get_rect().width / 2, HEIGHT / 2
+					 + title.get_rect().height + caption.get_rect().height / 2])
 
 """ Block
 Generated at the top of the screen
@@ -60,9 +79,9 @@ class LevelBlock(Block):
 	def update(self):
 		Block.update(self)
 
-	# Randomize the Block colour
+	# Choose the Block colour
 	def choose_colour(self, row):
-		# Choose between 1 of 5 different colours by generating a pseudorandom integer between 1 and 5
+		# Choose the block colour based on the row
 		if row == 1:
 			return RED
 		if row == 2:
@@ -183,13 +202,10 @@ class Ball(Block):
 			if self.dy > 0:
 				self.rect.bottom = player.rect.top
 			
-			print player_middle - ball_middle
-			if abs(player_middle - ball_middle) > 25:
+			if abs(player_middle - ball_middle) > PLAYER_SIDE_MARGIN:
 				self.dx *= -1
 
 			self.dy *= -1
-
-
 
 	# Update Ball's movement
 	def move(self, player, blocks):
@@ -226,45 +242,60 @@ def add_blocks():
 def main():
 	# Start game
 	pygame.init()
+	pygame.font.init()
 	running = True
+	paused = True
 
 	background = pygame.image.load(background_image)
 
-	# Create a new clock and add all objects to the game
+	# Create a new clock
 	clock = pygame.time.Clock()
 	blocks = add_blocks()
 	player = Player()
 	ball = Ball()
+	menu = Menu()
+
 	# Game loop
 	while running:
 		# Handle game events
 		for event in pygame.event.get():
-				# Quit the game when the window is closed
-	    		if event.type == pygame.QUIT:
-	        		running = False
+			# Quit the game when the window is closed
+			if event.type == pygame.QUIT:
+				running = False
 
-		# Draw screen and objects
-		# screen.blit(background, (0,0))
-		screen.fill(BLACK)
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_ESCAPE:
+					paused = not paused
 
-		for block in blocks:
-			block.update()
-		player.update()
-		ball.update(player, blocks)
+		if paused:
+			for block in blocks:
+				block.draw()
+			player.draw()
+			ball.draw()
+			menu.draw()
 
-		# End game conditions
-		if player.lives == 0:
-			running = False
+		else:
+			# Draw screen and objects
+			# screen.blit(background, (0,0))
+			screen.fill(BLACK)
 
-		if len(blocks) == 0:
-			running = False
+			for block in blocks:
+				block.update()
+			player.update()
+			ball.update(player, blocks)
+
+			# End game conditions
+			if player.lives == 0:
+				running = False
+
+			if len(blocks) == 0:
+				running = False
 
 		# Update screen at 60 FPS
 		pygame.display.flip()
 		clock.tick(60)
 
 	pygame.quit()
-	quit()
 
 if __name__ == '__main__':
 	main()

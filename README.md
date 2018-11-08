@@ -1,16 +1,10 @@
 # Breakout
-A simple Breakout clone written using Python and PyGame. This was
+A simple clone of the Atari game, Breakout written using Python and PyGame.
 
 ## Getting Started
-### Prerequisites
-1. Install the following:
-- Python 2.7
-- PyGame
-
 ### Installing
-1. Clone the directory with `git clone git@github.com:aidanclyens88/Breakout.git`.
-2. Run `python breakout.py` to play.
-3. Use 'A' to move left and 'D' to move right.
+1. Download and run the installer for Windows, Breakout-1.0.0-amd64.msi, in [dist](./dist) if you wish to install the game.
+2. The installer allows a shortcut to be added to your desktop.
 
 ## Author
 Aidan Clyens

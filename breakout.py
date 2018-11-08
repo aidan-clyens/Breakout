@@ -33,12 +33,15 @@ class Menu():
 
 	def draw(self):
 		title = self.title_font.render("Breakout", True, WHITE)
-		caption = self.caption_font.render("Press ESC to start", True, WHITE)
+		caption = self.caption_font.render("Press any key to start", True, WHITE)
+		caption2 = self.caption_font.render("Move with A and D and Escape to pause", True, WHITE)
 
 		screen.blit(title, [WIDTH / 2 - title.get_rect().width / 2, HEIGHT /
                       2 - title.get_rect().height / 2])
 		screen.blit(caption, [WIDTH / 2 - caption.get_rect().width / 2, HEIGHT / 2
 					 + title.get_rect().height + caption.get_rect().height / 2])
+		screen.blit(caption2, [WIDTH / 2 - caption2.get_rect().width / 2, HEIGHT / 2
+                        + title.get_rect().height + 4*caption.get_rect().height / 2])
 
 """ Block
 Generated at the top of the screen
@@ -261,7 +264,9 @@ def main():
 
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
-					paused = not paused
+					paused = True
+				else:
+					paused = False
 
 		if paused:
 			for block in blocks:
